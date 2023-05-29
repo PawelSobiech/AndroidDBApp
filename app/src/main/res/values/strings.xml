@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">App2_Android</string>
+    <string name="fabMan">Manufacturer</string>
+    <string name="fabModel">Model</string>
+    <string name="fabAndVer">Android version</string>
+    <string name="fabWeb">Web site</string>
+    <string name="cancel">CANCEL</string>
+    <string name="save">SAVE</string>
+</resources>
