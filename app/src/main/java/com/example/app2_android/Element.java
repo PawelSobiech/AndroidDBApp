@@ -7,7 +7,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "telefony")
-public class Element{
+public class Element {
     public Element(@NonNull String producent, String model, String wersja_android, String adres_www)
     {
         mProducent = producent;

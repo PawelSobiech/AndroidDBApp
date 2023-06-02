@@ -18,7 +18,17 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
     public ElementListAdapter(Context context) {
         mLayoutInflater=LayoutInflater.from(context);
         this.mElementList = new ArrayList<>();
+        //rzutowanie kontekstu na OnItemClickListener i zapisanie
+        //w polu mOnItemClickListener
+        //należy zapewnić obsługę wyjątku ClassCastException
     }
+
+    interface OnItemClickListener
+    {
+        void onItemClickListener(Element element);
+    }
+    private OnItemClickListener mOnItemClickListener;
+
     @NonNull
     @Override
     public ElementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,7 +46,7 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
             return mElementList.size();
         return 0;
     }
-    public class ElementViewHolder extends RecyclerView.ViewHolder {
+    public class ElementViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView ProducentTextView;
         TextView ModelTextView;
         public ElementViewHolder(@NonNull View itemView)
@@ -44,6 +54,12 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
             super(itemView);
             ProducentTextView=itemView.findViewById(R.id.ProducentTextView);
             ModelTextView = itemView.findViewById(R.id.ModelTextView);
+            itemView.setOnClickListener(this);
+        }
+        @Override
+        public void onClick(View v) {
+            //powiadomienie aktywności (mOnItemClickListener)
+            //jaki element został wybrany
         }
         public void bindToElementViewHolder(int position)
         {

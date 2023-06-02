@@ -31,4 +31,10 @@ public class ElementRepository {
             mElementDao.deleteAll();
         });
     }
+    void update(Element element)
+    {
+        ElementRoomDatabase.databaseWriteExecutor.execute(() ->{
+            mElementDao.update(element);
+        });
+    }
 }

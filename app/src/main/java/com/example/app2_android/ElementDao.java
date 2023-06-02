@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -16,4 +17,7 @@ public interface ElementDao {
     void deleteAll();
     @Query("SELECT * FROM telefony ORDER BY producent ASC")
     LiveData<List<Element>> getAlphabetizedElements();
+
+    @Update
+    void update(Element element);
 }
