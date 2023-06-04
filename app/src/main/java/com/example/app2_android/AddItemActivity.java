@@ -1,5 +1,3 @@
-// AddItemActivity.java
-
 package com.example.app2_android;
 
 import android.content.ActivityNotFoundException;
@@ -14,26 +12,21 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AddItemActivity extends AppCompatActivity {
-    private static final int ACTION_ADD = 1;
-    private static final int ACTION_EDIT = 2;
-    private Button cancelButton;
-    private Button webButton;
-    private Button saveButton;
     private EditText manufacturerET;
     private EditText modelET;
     private EditText andVerET;
     private EditText webET;
     private String producer, model, version, website;
-    private int action = ACTION_ADD;
+    private long id = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
-        cancelButton = findViewById(R.id.fabCancelButton);
-        webButton = findViewById(R.id.fabWebButton);
-        saveButton = findViewById(R.id.fabSaveButton);
+        Button cancelButton = findViewById(R.id.fabCancelButton);
+        Button webButton = findViewById(R.id.fabWebButton);
+        Button saveButton = findViewById(R.id.fabSaveButton);
         manufacturerET = findViewById(R.id.fabManET);
         modelET = findViewById(R.id.fabModelET);
         andVerET = findViewById(R.id.fabAndVerET);
@@ -44,15 +37,13 @@ public class AddItemActivity extends AppCompatActivity {
         saveButton.setOnClickListener(saveListener);
 
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("action")) {
-            action = intent.getIntExtra("action", ACTION_ADD);
-            if (action == ACTION_EDIT) {
-                producer = intent.getStringExtra("producer");
-                model = intent.getStringExtra("model");
-                version = intent.getStringExtra("androidVersion");
-                website = intent.getStringExtra("website");
-                fillFormWithData();
-            }
+        if(intent.hasExtra("MID")) { // Zmiana na "MID"
+            producer = intent.getStringExtra("producer");
+            model = intent.getStringExtra("model");
+            version = intent.getStringExtra("androidVersion");
+            website = intent.getStringExtra("website");
+            id = intent.getLongExtra("MID", -1L);
+            fillFormWithData();
         }
     }
 
@@ -68,14 +59,15 @@ public class AddItemActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(intent);
             } else {
-                Toast.makeText(AddItemActivity.this, "Wprowadź poprawny adres URL", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Wprowadź poprawny adres URL", Toast.LENGTH_SHORT).show();
             }
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, "No browser found to open the website", Toast.LENGTH_SHORT).show();
         }
     };
 
-    View.OnClickListener saveListener = view -> {
+    boolean validateInput()
+    {
         String producer = manufacturerET.getText().toString().trim();
         String model = modelET.getText().toString().trim();
         String androidVersion = andVerET.getText().toString().trim();
@@ -102,20 +94,30 @@ public class AddItemActivity extends AppCompatActivity {
             webET.setError("Website is required");
             isValid = false;
         }
+        return isValid;
+    }
+
+    View.OnClickListener saveListener = view -> {
+        String producer = manufacturerET.getText().toString().trim();
+        String model = modelET.getText().toString().trim();
+        String androidVersion = andVerET.getText().toString().trim();
+        String website = webET.getText().toString().trim();
+
+        boolean isValid = validateInput();
 
         if (isValid) {
             Intent intent = new Intent();
-            intent.putExtra("action", action);
             intent.putExtra("producer", producer);
             intent.putExtra("model", model);
             intent.putExtra("androidVersion", androidVersion);
             intent.putExtra("website", website);
+            if (id != -1) {
+                intent.putExtra("MID", id);
+            }
             setResult(RESULT_OK, intent);
             finish();
         }
     };
-
-
     private void fillFormWithData() {
         manufacturerET.setText(producer);
         modelET.setText(model);

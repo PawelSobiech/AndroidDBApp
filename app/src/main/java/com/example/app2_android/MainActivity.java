@@ -2,6 +2,7 @@ package com.example.app2_android;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,30 +21,22 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class MainActivity extends AppCompatActivity implements ElementListAdapter.OnItemClickListener {
     private ElementViewModel mElementViewModel;
     private ElementListAdapter mAdapter;
-    private FloatingActionButton fabMain;
-
     private static final int REQUEST_CODE_ADD = 1;
     private static final int REQUEST_CODE_EDIT = 2;
-    private static final int ACTION_EDIT = 2;
-    private static final int ACTION_ADD = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        fabMain = findViewById(R.id.fabMain);
+        FloatingActionButton fabMain = findViewById(R.id.fabMain);
         mAdapter = new ElementListAdapter(this);
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         fabMain.setOnClickListener(fabListener);
         mElementViewModel = new ViewModelProvider(this).get(ElementViewModel.class);
 
-        mElementViewModel.getAllElements().observe(this, elements -> {
-            mAdapter.setElementList(elements);
-        });
-        //usuwanie elementu
+        mElementViewModel.getAllElements().observe(this, elements -> mAdapter.setElementList(elements));
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -80,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements ElementListAdapte
     @Override
     public void onItemClickListener(Element element) {
         Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
-        intent.putExtra("action", ACTION_EDIT);
+        intent.putExtra("MID", element.getMID());
         intent.putExtra("producer", element.getMProducent());
         intent.putExtra("model", element.getMModel());
         intent.putExtra("androidVersion", element.getMWersja_Android());
@@ -90,41 +83,49 @@ public class MainActivity extends AppCompatActivity implements ElementListAdapte
 
     View.OnClickListener fabListener = view -> {
         Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
-        intent.putExtra("action", ACTION_ADD);
         startActivityForResult(intent, REQUEST_CODE_ADD);
     };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK && data != null) {
-            int action = data.getIntExtra("action", ACTION_ADD);
-
-            if (action == ACTION_ADD) {
-                String producer = data.getStringExtra("producer");
-                String model = data.getStringExtra("model");
-                String androidVersion = data.getStringExtra("androidVersion");
-                String website = data.getStringExtra("website");
-
-                Element element = new Element(producer, model, androidVersion, website);
-                mElementViewModel.insert(element);
-                Toast.makeText(this, "Element added", Toast.LENGTH_SHORT).show();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_ADD) {
+                handleAddElement(data);
+            } else if (requestCode == REQUEST_CODE_EDIT) {
+                handleEditElement(data);
+            } else {
+                Toast.makeText(this, "Invalid request code", Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == REQUEST_CODE_EDIT && resultCode == RESULT_OK && data != null) {
-            int action = data.getIntExtra("action", ACTION_EDIT);
-
-            if (action == ACTION_EDIT) {
-                String producer = data.getStringExtra("producer");
-                String model = data.getStringExtra("model");
-                String androidVersion = data.getStringExtra("androidVersion");
-                String website = data.getStringExtra("website");
-
-                Element element = new Element(producer, model, androidVersion, website);
-                mElementViewModel.update(element);
-                Toast.makeText(this, "Element updated", Toast.LENGTH_SHORT).show();
-            }
+        } else {
+            Toast.makeText(this, "Element not saved", Toast.LENGTH_SHORT).show();
         }
     }
+    private void handleAddElement(Intent data) {
+        String producer = data.getStringExtra("producer");
+        String model = data.getStringExtra("model");
+        String androidVersion = data.getStringExtra("androidVersion");
+        String website = data.getStringExtra("website");
 
+        Element element = new Element(producer, model, androidVersion, website);
+        mElementViewModel.insert(element);
+        Toast.makeText(this, "Element added", Toast.LENGTH_SHORT).show();
+    }
+    private void handleEditElement(Intent data) {
+        long id = data.getLongExtra("MID", -1L);
+        Log.d("DEBUG", "ID received: " + id); // Dodaj ten wiersz
+        if (id == -1) {
+            Toast.makeText(this, "Element can't be updated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String producer = data.getStringExtra("producer");
+        String model = data.getStringExtra("model");
+        String androidVersion = data.getStringExtra("androidVersion");
+        String website = data.getStringExtra("website");
+
+        Element element = new Element(producer, model, androidVersion, website);
+        element.setMID(id);
+        mElementViewModel.update(element);
+        Toast.makeText(this, "Element updated", Toast.LENGTH_SHORT).show();
+    }
 }
