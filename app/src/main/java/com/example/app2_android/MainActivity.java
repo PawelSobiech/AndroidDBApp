@@ -1,7 +1,5 @@
 package com.example.app2_android;
 
-import static android.content.Intent.ACTION_EDIT;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,7 +20,11 @@ public class MainActivity extends AppCompatActivity implements ElementListAdapte
     private ElementViewModel mElementViewModel;
     private ElementListAdapter mAdapter;
     private FloatingActionButton fabMain;
-    private static final int EDIT_ELEMENT_REQUEST_CODE = 1;
+
+    private static final int REQUEST_CODE_ADD = 1;
+    private static final int REQUEST_CODE_EDIT = 2;
+    private static final int ACTION_EDIT = 2;
+    private static final int ACTION_ADD = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,57 +42,71 @@ public class MainActivity extends AppCompatActivity implements ElementListAdapte
         mElementViewModel.getAllElements().observe(this, elements -> {
             mAdapter.setElementList(elements);
         });
-
-        Bundle bundleItem = getIntent().getExtras();
-        if(bundleItem != null)
-        {
-            String producer = bundleItem.getString("producer");
-            String model = bundleItem.getString("model");
-            String androidVersion = bundleItem.getString("androidVersion");
-            String website = bundleItem.getString("website");
-            Element element = new Element(producer, model, androidVersion, website);
-            mElementViewModel.insert(element);
-        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main,menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.clear_data)
-        { Toast.makeText(this,"Clearing the data...",
-                Toast.LENGTH_SHORT).show();
+        if (id == R.id.clear_data) {
+            Toast.makeText(this, "Clearing the data...", Toast.LENGTH_SHORT).show();
             mElementViewModel.deleteAll();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onItemClickListener(Element element) {
         Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
-        intent.putExtra("action", 2);
-        intent.putExtra("element", element);
-        startActivity(intent);
+        intent.putExtra("action", ACTION_EDIT);
+        intent.putExtra("producer", element.getMProducent());
+        intent.putExtra("model", element.getMModel());
+        intent.putExtra("androidVersion", element.getMWersja_Android());
+        intent.putExtra("website", element.getMAdres_WWW());
+        startActivityForResult(intent, REQUEST_CODE_EDIT);
     }
-    View.OnClickListener fabListener = view ->
-    {
+
+    View.OnClickListener fabListener = view -> {
         Intent intent = new Intent(MainActivity.this, AddItemActivity.class);
-        intent.putExtra("action", 1);
-        startActivity(intent);
+        intent.putExtra("action", ACTION_ADD);
+        startActivityForResult(intent, REQUEST_CODE_ADD);
     };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == EDIT_ELEMENT_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            int action = data.getIntExtra("action", 2);
-            if (action == 2) {
-                Element editedElement = data.getParcelableExtra("element");
-                mElementViewModel.update(editedElement);
+
+        if (requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK && data != null) {
+            int action = data.getIntExtra("action", ACTION_ADD);
+
+            if (action == ACTION_ADD) {
+                String producer = data.getStringExtra("producer");
+                String model = data.getStringExtra("model");
+                String androidVersion = data.getStringExtra("androidVersion");
+                String website = data.getStringExtra("website");
+
+                Element element = new Element(producer, model, androidVersion, website);
+                mElementViewModel.insert(element);
+                Toast.makeText(this, "Element added", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_CODE_EDIT && resultCode == RESULT_OK && data != null) {
+            int action = data.getIntExtra("action", ACTION_EDIT);
+
+            if (action == ACTION_EDIT) {
+                String producer = data.getStringExtra("producer");
+                String model = data.getStringExtra("model");
+                String androidVersion = data.getStringExtra("androidVersion");
+                String website = data.getStringExtra("website");
+
+                Element element = new Element(producer, model, androidVersion, website);
+                mElementViewModel.update(element);
+                Toast.makeText(this, "Element updated", Toast.LENGTH_SHORT).show();
             }
         }
     }

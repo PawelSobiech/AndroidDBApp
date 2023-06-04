@@ -77,20 +77,29 @@
         android:id="@+id/wiersz5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/fabWebButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:insetLeft="15dp"
+            android:insetRight="15dp"
             android:text="@string/fabWeb" />
+
         <Button
             android:id="@+id/fabCancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:insetLeft="15dp"
+            android:insetRight="15dp"
             android:text="@string/cancel" />
+
         <Button
             android:id="@+id/fabSaveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:insetLeft="15dp"
+            android:insetRight="15dp"
             android:text="@string/save" />
     </TableRow>
 </TableLayout>

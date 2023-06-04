@@ -17,7 +17,6 @@ public interface ElementDao {
     void deleteAll();
     @Query("SELECT * FROM telefony ORDER BY producent ASC")
     LiveData<List<Element>> getAlphabetizedElements();
-
     @Update
     void update(Element element);
 }

@@ -15,19 +15,21 @@ import java.util.List;
 public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.ElementViewHolder> {
     private LayoutInflater mLayoutInflater;
     private List<Element> mElementList;
+    private OnItemClickListener mOnItemClickListener;
     public ElementListAdapter(Context context) {
         mLayoutInflater=LayoutInflater.from(context);
         this.mElementList = new ArrayList<>();
-        //rzutowanie kontekstu na OnItemClickListener i zapisanie
-        //w polu mOnItemClickListener
-        //należy zapewnić obsługę wyjątku ClassCastException
+        try {
+            mOnItemClickListener = (OnItemClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context + " must implement OnItemClickListener");
+        }
     }
 
     interface OnItemClickListener
     {
         void onItemClickListener(Element element);
     }
-    private OnItemClickListener mOnItemClickListener;
 
     @NonNull
     @Override
@@ -58,8 +60,13 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
         }
         @Override
         public void onClick(View v) {
-            //powiadomienie aktywności (mOnItemClickListener)
-            //jaki element został wybrany
+            if (mOnItemClickListener != null) {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Element element = mElementList.get(position);
+                    mOnItemClickListener.onItemClickListener(element);
+                }
+            }
         }
         public void bindToElementViewHolder(int position)
         {
