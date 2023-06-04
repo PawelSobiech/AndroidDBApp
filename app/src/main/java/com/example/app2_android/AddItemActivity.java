@@ -71,15 +71,45 @@ public class AddItemActivity extends AppCompatActivity {
     };
 
     View.OnClickListener saveListener = view -> {
-        Intent intent = new Intent();
-        intent.putExtra("action", action);
-        intent.putExtra("producer", manufacturerET.getText().toString());
-        intent.putExtra("model", modelET.getText().toString());
-        intent.putExtra("androidVersion", andVerET.getText().toString());
-        intent.putExtra("website", webET.getText().toString());
-        setResult(RESULT_OK, intent);
-        finish();
+        String producer = manufacturerET.getText().toString().trim();
+        String model = modelET.getText().toString().trim();
+        String androidVersion = andVerET.getText().toString().trim();
+        String website = webET.getText().toString().trim();
+
+        boolean isValid = true;
+
+        if (producer.isEmpty()) {
+            manufacturerET.setError("Producer is required");
+            isValid = false;
+        }
+
+        if (model.isEmpty()) {
+            modelET.setError("Model is required");
+            isValid = false;
+        }
+
+        if (androidVersion.isEmpty()) {
+            andVerET.setError("Android version is required");
+            isValid = false;
+        }
+
+        if (website.isEmpty()) {
+            webET.setError("Website is required");
+            isValid = false;
+        }
+
+        if (isValid) {
+            Intent intent = new Intent();
+            intent.putExtra("action", action);
+            intent.putExtra("producer", producer);
+            intent.putExtra("model", model);
+            intent.putExtra("androidVersion", androidVersion);
+            intent.putExtra("website", website);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     };
+
 
     private void fillFormWithData() {
         manufacturerET.setText(producer);
