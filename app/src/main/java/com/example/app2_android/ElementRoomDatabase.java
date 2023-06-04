@@ -38,9 +38,9 @@ public abstract class ElementRoomDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 ElementDao dao = INSTANCE.elementDao();
                 Element[] elements = {
-                    new Element("DyszakCorp", "Dyszak00", "6.0","dyszak.com/dyszak00"),
+                    new Element("DyszakCorp", "Dyszak00", "6.0","tinyurl.com/eeedyszak"),
                     new Element("GhettoMobile","Trapfon","brak","pdw.pl/pdk"),
-                    new Element("CipciaPhone","Cipcifon","21.37","cipcia.pl/enterprise")};
+                    new Element("Eeeehh","No_02","21.37","ehh.pl/enterprise")};
                     for (Element e : elements)
                         dao.insert(e);
             });
