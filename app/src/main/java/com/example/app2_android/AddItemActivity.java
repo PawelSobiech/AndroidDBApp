@@ -37,7 +37,7 @@ public class AddItemActivity extends AppCompatActivity {
         saveButton.setOnClickListener(saveListener);
 
         Intent intent = getIntent();
-        if(intent.hasExtra("MID")) { // Zmiana na "MID"
+        if(intent.hasExtra("MID")) {
             producer = intent.getStringExtra("producer");
             model = intent.getStringExtra("model");
             version = intent.getStringExtra("androidVersion");
@@ -62,7 +62,7 @@ public class AddItemActivity extends AppCompatActivity {
                 Toast.makeText(this, "Wprowadź poprawny adres URL", Toast.LENGTH_SHORT).show();
             }
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "No browser found to open the website", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Nie znaleziono domyślnej przeglądarki", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -76,22 +76,22 @@ public class AddItemActivity extends AppCompatActivity {
         boolean isValid = true;
 
         if (producer.isEmpty()) {
-            manufacturerET.setError("Producer is required");
+            manufacturerET.setError("Wpisz producenta");
             isValid = false;
         }
 
         if (model.isEmpty()) {
-            modelET.setError("Model is required");
+            modelET.setError("Wpisz model");
             isValid = false;
         }
 
         if (androidVersion.isEmpty()) {
-            andVerET.setError("Android version is required");
+            andVerET.setError("Wpisz wersję Androida");
             isValid = false;
         }
 
         if (website.isEmpty()) {
-            webET.setError("Website is required");
+            webET.setError("Wpisz adres www");
             isValid = false;
         }
         return isValid;

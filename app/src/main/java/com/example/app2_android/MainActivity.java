@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements ElementListAdapte
                 int position = viewHolder.getAdapterPosition();
                 Element element = mAdapter.getElementAtPosition(position);
                 mElementViewModel.delete(element);
-                Toast.makeText(MainActivity.this, "Record deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Usunięto element", Toast.LENGTH_SHORT).show();
             }
         });
         itemTouchHelper.attachToRecyclerView(recyclerView);
@@ -95,10 +95,10 @@ public class MainActivity extends AppCompatActivity implements ElementListAdapte
             } else if (requestCode == REQUEST_CODE_EDIT) {
                 handleEditElement(data);
             } else {
-                Toast.makeText(this, "Invalid request code", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Niepoprawny kod żądania", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "Element not saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Element nie został zapisany", Toast.LENGTH_SHORT).show();
         }
     }
     private void handleAddElement(Intent data) {
@@ -109,13 +109,12 @@ public class MainActivity extends AppCompatActivity implements ElementListAdapte
 
         Element element = new Element(producer, model, androidVersion, website);
         mElementViewModel.insert(element);
-        Toast.makeText(this, "Element added", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Element został dodany", Toast.LENGTH_SHORT).show();
     }
     private void handleEditElement(Intent data) {
         long id = data.getLongExtra("MID", -1L);
-        Log.d("DEBUG", "ID received: " + id); // Dodaj ten wiersz
         if (id == -1) {
-            Toast.makeText(this, "Element can't be updated", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Nie można zaktualizowac elementu", Toast.LENGTH_SHORT).show();
             return;
         }
         String producer = data.getStringExtra("producer");
@@ -126,6 +125,6 @@ public class MainActivity extends AppCompatActivity implements ElementListAdapte
         Element element = new Element(producer, model, androidVersion, website);
         element.setMID(id);
         mElementViewModel.update(element);
-        Toast.makeText(this, "Element updated", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Element został zaktualizowany", Toast.LENGTH_SHORT).show();
     }
 }
