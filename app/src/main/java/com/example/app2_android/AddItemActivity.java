@@ -2,11 +2,14 @@
 
 package com.example.app2_android;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -59,7 +62,12 @@ public class AddItemActivity extends AppCompatActivity {
     };
 
     View.OnClickListener webListener = view -> {
-        // Obsługa przycisku webButton
+        try {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(website));
+            startActivity(browserIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "No browser found to open the website", Toast.LENGTH_SHORT).show();
+        }
     };
 
     View.OnClickListener saveListener = view -> {

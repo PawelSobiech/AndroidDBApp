@@ -76,6 +76,6 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
     }
     public void setElementList(List<Element> ElementList) {
         this.mElementList = ElementList;
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 }
