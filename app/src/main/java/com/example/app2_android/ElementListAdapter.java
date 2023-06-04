@@ -78,4 +78,11 @@ public class ElementListAdapter extends RecyclerView.Adapter<ElementListAdapter.
         this.mElementList = ElementList;
         notifyDataSetChanged();
     }
+    public Element getElementAtPosition(int position) {
+        if (position >= 0 && position < mElementList.size()) {
+            return mElementList.get(position);
+        }
+        return null;
+    }
+
 }

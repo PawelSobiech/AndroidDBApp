@@ -63,8 +63,13 @@ public class AddItemActivity extends AppCompatActivity {
 
     View.OnClickListener webListener = view -> {
         try {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(website));
-            startActivity(browserIntent);
+            String url = webET.getText().toString().trim();
+            if (!url.isEmpty()) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            } else {
+                Toast.makeText(AddItemActivity.this, "Wprowadź poprawny adres URL", Toast.LENGTH_SHORT).show();
+            }
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, "No browser found to open the website", Toast.LENGTH_SHORT).show();
         }
